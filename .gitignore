@@ -1,0 +1,16 @@
+# created by virtualenv automatically
+
+# Virtual Environment
+.venv/
+
+# TEST Folder
+TEST/
+
+# IDE
+.idea/
+
+# Logs
+*.log
+
+# Python Bitcode
+__pycache__/
