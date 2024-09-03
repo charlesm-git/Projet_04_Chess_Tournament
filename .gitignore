@@ -3,8 +3,13 @@
 # Virtual Environment
 .venv/
 
-# TEST Folder
+# TEST Folder / Files
 TEST/
+TEST.py
+
+# Données
+data/
+*.json
 
 # IDE
 .idea/
