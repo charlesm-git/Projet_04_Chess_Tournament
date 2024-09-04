@@ -8,28 +8,41 @@ def starting_date():
 
 class Tournament:
 
-    def __init__(self, name, location, description,
-                 tournament_players, number_of_rounds=4):
+    def __init__(self, name, location, description, start_date, end_date,
+                 number_of_rounds=4):
         self.name = name
         self.location = location
         self.NUMBER_OF_ROUNDS = number_of_rounds
-        self.current_round = 1
-        self.description = description
-        self.start_date = None
-        self.finish_date = None
-        self.rounds = []
-        self.tournament_players = {}
-
-        for player in tournament_players:
-            self.tournament_players[player["chess_id"]] = 0
+        self.current_round_number = 0
+        if description == '':
+            self.description = 'Pas de description'
+        else:
+            self.description = description
+        self.start_date = start_date
+        self.end_date = end_date
+        self.current_round = None
+        self.rounds_results = []
+        self.tournament_players = []
 
     def __repr__(self):
         return (f'name={self.name}, '
                 f'location={self.location}, '
                 f'number_of_rounds={self.NUMBER_OF_ROUNDS}, '
-                f'current_round={self.current_round}, '
+                f'current_round={self.current_round_number}, '
                 f'description={self.description}, '
                 f'start_date={self.start_date}, '
-                f'finish_date={self.finish_date}, '
+                f'end_date={self.end_date}, '
                 f'players={self.tournament_players}')
 
+    def save(self):
+        """ Display the tournament's data in a dictionary for the storage """
+        return {'name': self.name,
+                'location': self.location,
+                'description': self.description,
+                'start_date': self.start_date,
+                'end_date': self.end_date,
+                'number_of_rounds': self.NUMBER_OF_ROUNDS,
+                'current_round': self.current_round_number,
+                'rounds_results': self.rounds_results,
+                'players': self.tournament_players
+                }
