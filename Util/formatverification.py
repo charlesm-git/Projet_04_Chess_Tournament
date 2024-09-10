@@ -1,5 +1,6 @@
 from datetime import datetime
 import re
+from pathlib import Path
 
 
 def valid_date_format(date):
@@ -24,3 +25,17 @@ def valid_chess_id_format(chess_id):
 def round_date():
     timestamp = datetime.now().strftime("%Y-%m-%d-T%H:%M:%S")
     return timestamp
+
+
+def folder_creation():
+    """ Creates the data's storing folders if they don't already exist """
+    tournament_directory = Path('../data/tournament/')
+    player_database = Path('../data/players.json')
+    if not tournament_directory.exists():
+        tournament_directory.mkdir(parents=True)
+        player_database.touch()
+
+def tournament_name_formatting(name):
+    name = name.lower()
+    name = name.replace(' ', '_')
+    return name

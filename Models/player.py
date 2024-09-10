@@ -8,12 +8,9 @@ class Player:
         self.player_date_of_birth = player_date_of_birth
 
     @classmethod
-    def from_json_format(cls, player_data):
+    def from_player_database_json_format(cls, player_data):
         """ Instance a Player from a dictionary built from a JSON format """
-        return cls(player_data['player_chess_id'],
-                   player_data['player_name'],
-                   player_data['player_surname'],
-                   player_data['player_date_of_birth'])
+        return cls(*player_data.values())
 
     def __repr__(self):
         return (f'Player : chess_ID={self.player_chess_id}, '
