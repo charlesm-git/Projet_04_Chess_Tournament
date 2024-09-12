@@ -33,6 +33,23 @@ class Round:
     def new_round_tournament(cls, tournament):
         return cls(tournament=tournament)
 
+    def __str__(self):
+        end_status = 'En cours'
+        if self.end_date != 0:
+            end_status = self.end_date
+
+        matches_str = '\n'.join([f'{match.player1} / '
+                                 f'{match.player2} /// '
+                                 f'résultat du match : '
+                                 f'{match.match_score_player1}'
+                                 f'-{match.match_score_player2}'
+                                 for match in self.matches])
+
+        return (f'{self.name}\n'
+                f'Date de début : {self.start_date}\n'
+                f'Date de fin : {end_status}\n'
+                f'matchs du round : \n{matches_str}')
+
     def __repr__(self):
         return (f'{self.name} : '
                 f'start_date={self.start_date}, '

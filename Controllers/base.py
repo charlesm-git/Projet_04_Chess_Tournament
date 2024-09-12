@@ -1,25 +1,12 @@
 import json
 
-from Views.baseview import BaseView
 from Models.player import Player
 from Models.tournament import Tournament
+from Controllers.tournamentcontroller import TournamentController
+from Controllers.reportcontroller import ReportController
 from Util.formatverification import folder_creation
 from Util.formatverification import tournament_name_formatting
-from Controllers.tournamentcontroller import TournamentController
-from Controllers.menucontroller import MenuController
-
-
-def load_players_from_database():
-    """
-    Load the players from the JSON database and return a list containing
-    all Player
-    """
-    with open('../data/players.json', 'r') as players_file:
-        players_data = json.load(players_file)
-        players = []
-        for player_data in players_data:
-            players.append(Player.from_player_database_json_format(player_data))
-        return players
+from Util.loadplayers import load_players_from_database
 
 
 class Controller:
@@ -28,8 +15,8 @@ class Controller:
         folder_creation()
         self.players = load_players_from_database()
         self.view = view
-        self.menu_controller = MenuController(self.view)
         self.tournament_controller = None
+        self.report_controller = ReportController(self.view)
 
     def add_player_to_database(self):
         """ Add a player to the database """
@@ -48,6 +35,7 @@ class Controller:
                 self.view.player_added_successfully()
             else:
                 break
+        self.report_controller.update_players()
 
     def create_tournament(self):
         """ Create a tournament according to the data provided by the user """
@@ -66,8 +54,7 @@ class Controller:
                                         tournament_data['description'],
                                         tournament_data['start_date'],
                                         tournament_data['end_date'])
-        self.tournament_controller = TournamentController(new_tournament,
-                                                          self.view)
+        self.update_controllers(new_tournament)
         self.tournament_controller.save_tournament()
         self.view.tournament_created_successfully(
             self.tournament_controller.tournament)
@@ -88,45 +75,81 @@ class Controller:
                 tournament_data = json.load(tournament_file)
 
             new_tournament = Tournament.from_json_format(tournament_data)
-            self.tournament_controller = TournamentController(new_tournament,
-                                                              self.view)
+            self.update_controllers(new_tournament)
             self.view.tournament_loaded_successfully(
                 self.tournament_controller.tournament)
         except FileNotFoundError:
             self.view.error_loading_tournament()
 
+    def update_controllers(self, tournament):
+        self.tournament_controller = TournamentController(tournament,
+                                                          self.view)
+        self.report_controller = ReportController(self.view,
+                                                  self.tournament_controller)
+
     def main_menu_action(self):
-        user_input = self.menu_controller.main_menu()
+        user_input = self.view.get_main_menu(self.tournament_controller)
         match user_input:
-            case 1:
+            case '1':
                 self.add_player_to_database()
                 return True
-            case 2:
+            case '2':
                 self.create_tournament()
                 return True
-            case 3:
+            case '3':
                 self.load_tournament_from_database()
                 return True
-            case 4:
-                if self.tournament_controller is not None:
-                    (self.tournament_controller
-                     .add_player_to_tournament(self.players))
-                else:
-                    self.view.error_continue_tournament()
+            case '4':
+                self.handle_add_players_to_tournament()
                 return True
-            case 5:
-                if self.tournament_controller is not None:
-                    self.tournament_controller.continue_tournament()
-                else:
-                    self.view.error_continue_tournament()
+            case '5':
+                self.handle_continue_tournament()
                 return True
-            case 9:
+            case '6':
+                self.handle_get_tournament_status()
+                return True
+            case '7':
+                self.report_menu_action()
+                return True
+            case '9':
                 return False
+            case _:
+                self.view.error_input()
+                return True
 
+    def report_menu_action(self):
+        user_input = self.view.get_report_menu()
+        match user_input:
+            case '1':
+                self.report_controller.players_list_report()
+            case '2':
+                self.report_controller.tournaments_list_report()
+            case '3':
+                self.report_controller.tournaments_players_list_report()
+            case '4':
+                self.report_controller.tournament_rounds_and_matches_report()
+            case '5':
+                self.report_controller.tournament_results()
+            case '9':
+                pass
+            case _:
+                self.view.error_input()
 
-if __name__ == "__main__":
+    def handle_add_players_to_tournament(self):
+        if self.tournament_controller is not None:
+            (self.tournament_controller
+             .add_player_to_tournament(self.players))
+        else:
+            self.view.error_tournament_not_loaded()
 
-    view = BaseView()
-    controller = Controller(view)
-    while controller.main_menu_action():
-        pass
+    def handle_continue_tournament(self):
+        if self.tournament_controller is not None:
+            self.tournament_controller.continue_tournament()
+        else:
+            self.view.error_tournament_not_loaded()
+
+    def handle_get_tournament_status(self):
+        if self.tournament_controller is not None:
+            self.tournament_controller.tournament.get_status()
+        else:
+            self.view.error_tournament_not_loaded()

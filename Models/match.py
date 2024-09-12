@@ -1,4 +1,4 @@
-from .tournamentplayer import TournamentPlayer
+from Models.tournamentplayer import TournamentPlayer
 
 
 class Match:

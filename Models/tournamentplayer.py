@@ -1,8 +1,7 @@
-from .player import Player
+from Models.player import Player
 
 
 class TournamentPlayer(Player):
-
     def __init__(self, player_chess_id, player_name, player_surname,
                  player_date_of_birth, player_current_score=0):
         super().__init__(player_chess_id, player_name, player_surname,
@@ -19,8 +18,8 @@ class TournamentPlayer(Player):
         #            player_data['player_current_score'])
 
     def __str__(self):
-        return (f'{self.player_name} {self.player_surname} (score de '
-                f'{self.score})')
+        return (f'{self.player_name} {self.player_surname} - '
+                f'{self.player_chess_id} (score total sur le tournoi de {self.score})')
 
     def __repr__(self):
         representation = (f'[chess_ID={self.player_chess_id}, '
@@ -34,3 +33,5 @@ class TournamentPlayer(Player):
         data = super().save()
         data['player_current_score'] = self.score
         return data
+
+

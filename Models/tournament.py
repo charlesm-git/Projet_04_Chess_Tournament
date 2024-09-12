@@ -1,5 +1,5 @@
-from .tournamentplayer import TournamentPlayer
-from .round import Round
+from Models.tournamentplayer import TournamentPlayer
+from Models.round import Round
 
 
 class Tournament:
@@ -101,3 +101,38 @@ class Tournament:
                 }
 
         return data
+
+    def get_status(self):
+        print()
+        print(f'Le statut du tournoi {self.name} est le suivant : ')
+        print(f'Description : {self.description}')
+        print(f'Localisation : {self.location}')
+        print(f'Date de début : {self.start_date}')
+        print(f'Date de fin : {self.end_date}')
+        print(f'nombre de rounds prévus : {self.NUMBER_OF_ROUNDS}')
+        if self.tournament_players:
+            print()
+            print(f'Les joueurs participants au tournois sont les suivants : ')
+            for player in self.tournament_players:
+                print(player)
+        else:
+            print('Aucun joueur enregistré dans le tournoi pour le moment')
+        if self.current_round is None:
+            print("Le tournoi n'a pas encore commencé, vous pouvez encore "
+                  "ajouter des joueurs si vous le souhaitez")
+        elif self.current_round.end_date == 0:
+            print()
+            print(f'Le {self.current_round.name} est en cours, voici son '
+                  f'statut : ')
+            print(self.current_round)
+        else:
+            number_of_round_left = (self.NUMBER_OF_ROUNDS
+                                    - self.current_round_number)
+            print()
+            print(f'Le {self.current_round.name} est marqué comme terminé. Il '
+                  f'reste {number_of_round_left} round(s) à jouer.')
+        if self.rounds_results:
+            print()
+            print(f'Les résultat des rounds déjà terminés sont : ')
+            for round in self.rounds_results:
+                print(round)

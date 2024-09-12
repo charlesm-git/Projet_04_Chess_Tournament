@@ -5,7 +5,7 @@
 
 # TEST Folder / Files
 TEST/
-TEST.py
+main.py
 
 # Données
 data/

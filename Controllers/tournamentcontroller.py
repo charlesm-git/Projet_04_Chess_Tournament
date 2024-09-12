@@ -40,7 +40,7 @@ class TournamentController:
             self.tournament_result()
 
     def tournament_result(self):
-        self.order_tournament_players()
+        self.order_tournament_players_by_score()
         player_ranking = self.tournament.tournament_players[::-1]
         rank = 1
         for player in player_ranking:
@@ -110,7 +110,7 @@ class TournamentController:
         match_list = []
         # Sort the list of players in the tournament according to their
         # current score
-        self.order_tournament_players()
+        self.order_tournament_players_by_score()
         players = self.tournament.tournament_players
         i = 0
         # Create the matches associations
@@ -120,7 +120,7 @@ class TournamentController:
             i += 2
         return match_list
 
-    def order_tournament_players(self):
+    def order_tournament_players_by_score(self):
         """
         Order the players of a tournament according to their ranking
         """
