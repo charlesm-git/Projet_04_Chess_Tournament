@@ -47,6 +47,7 @@ class TournamentController:
             self.view.player_ranking(player, rank)
             rank += 1
 
+
     def add_player_to_tournament(self, players):
         """ Create the list of players for one tournament """
         if self.tournament.current_round is None:
@@ -70,7 +71,8 @@ class TournamentController:
                                     TournamentPlayer(player.player_chess_id,
                                                      player.player_name,
                                                      player.player_surname,
-                                                     player.player_date_of_birth)
+                                                     player
+                                                     .player_date_of_birth)
                                 )
                                 (self.tournament.tournament_players
                                  .append(tournament_player))
@@ -152,19 +154,19 @@ class TournamentController:
         :return the match result in a tuple format
         """
         while True:
-            result = int(self.view.get_match_result(match))
-            if result == 0 or result == 1 or result == 2:
+            result = self.view.get_match_result(match)
+            if result in ['0', '1', '2']:
                 break
             else:
-                self.view.error_match_result()
+                self.view.error_input()
         match result:
-            case 1:
+            case '1':
                 match.match_score_player1 = 1
                 match.player1.score += 1
-            case 2:
+            case '2':
                 match.match_score_player2 = 1
                 match.player2.score += 1
-            case 0:
+            case '0':
                 match.match_score_player1 = 0.5
                 match.player1.score += 0.5
                 match.match_score_player2 = 0.5
@@ -172,7 +174,7 @@ class TournamentController:
         return match
 
     def save_tournament(self):
-        with open(f'../data/tournament/'
+        with open(f'./data/tournament/'
                   f'{self.tournament.start_date}_{self.tournament.end_date}_'
                   f'{self.tournament.name}.json', 'w') as tournament_file:
             json.dump(self.tournament.save(), tournament_file, indent=4)

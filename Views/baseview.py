@@ -95,9 +95,6 @@ class BaseView:
         print('Entrer 1 si le joueur 1 à gagné, 2 si le joueur 2 à gagné, '
               '0 s ils ont fait match nul : ')
 
-    def error_match_result(self):
-        print('Vous devez entrer 0, 1 ou 2 en fonction du résultat du match')
-
     def get_match_result(self, match):
         return input(f'Qui a gagné le match {match} ? ')
 
@@ -193,4 +190,4 @@ class BaseView:
               'en ajouter avant de continuer')
 
     def error_input(self):
-        print('\nErreur dans la saisie')
+        print('\nErreur dans la saisie\n')

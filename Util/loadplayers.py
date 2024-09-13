@@ -8,7 +8,7 @@ def load_players_from_database():
     Load the players from the JSON database and return a list containing
     all Player
     """
-    with open('../data/players.json', 'r') as players_file:
+    with open('./data/players.json', 'r') as players_file:
         players_data = json.load(players_file)
         players = []
         for player_data in players_data:

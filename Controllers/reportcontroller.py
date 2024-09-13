@@ -40,7 +40,7 @@ class ReportController:
         report.field_names = ['Nom', 'Date de début', 'Date de fin',
                               'nombre de round', 'Description',]
         report.padding_width = 2
-        folder_path = Path('../data/tournament/')
+        folder_path = Path('./data/tournament/')
         for file in folder_path.iterdir():
             if file.is_file():
                 with (open(file, 'r') as file_content):
@@ -78,6 +78,8 @@ class ReportController:
             print("\nLe tournoi n'a pas encore commencé, vous pouvez "
                   "encore ajouter des joueurs si vous le souhaitez")
         elif self.tournament_controller.tournament.current_round.end_date == 0:
+            print(f'\nLe {self.tournament_controller.tournament.current_round
+                  .name} est en cours :')
             self.round_results_report(self.tournament_controller.tournament
                                       .current_round)
         else:
@@ -97,19 +99,17 @@ class ReportController:
     def tournament_results(self):
         if self.tournament_controller is not None:
             report = prettytable.PrettyTable()
-            report.title = ('Résultats du tournoi sélectionné')
-            report.field_names = ['Rang', 'Nom', 'Prénom', 'Identifiant',
-                                 'Score actuel']
+            report.title = 'Résultats du tournoi sélectionné'
+            report.field_names = ['Nom', 'Prénom', 'Identifiant',
+                                  'Score actuel']
             report.padding_width = 2
-            rank = 1
+            self.tournament_controller.order_tournament_players_by_score()
             for player in (self.tournament_controller.tournament
                            .tournament_players):
-                report.add_row([rank,
-                               player.player_surname,
+                report.add_row([player.player_surname,
                                player.player_name,
                                player.player_chess_id,
                                player.score])
-                rank += 1
             report.sortby = 'Score actuel'
             report.reversesort = True
             print()
@@ -117,7 +117,7 @@ class ReportController:
             if self.tournament_controller.tournament.current_round is None:
                 print("Le tournoi n'a pas encore commencé, vous pouvez encore "
                       "ajouter des joueurs")
-            elif (self.tournament_controller.tournament.current_round_number <=
+            elif (self.tournament_controller.tournament.current_round_number <
                   self.tournament_controller.tournament.NUMBER_OF_ROUNDS or
                   self.tournament_controller.tournament.current_round
                   .end_date == 0):

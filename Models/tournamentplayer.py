@@ -11,11 +11,6 @@ class TournamentPlayer(Player):
     @classmethod
     def from_tournament_player_database_json_format(cls, player_data):
         return cls(*player_data.values())
-        # return cls(player_data['player_chess_id'],
-        #            player_data['player_name'],
-        #            player_data['player_surname'],
-        #            player_data['player_date_of_birth'],
-        #            player_data['player_current_score'])
 
     def __str__(self):
         return (f'{self.player_name} {self.player_surname} - '

@@ -30,7 +30,7 @@ class Controller:
                 database_content = []
                 for player in self.players:
                     database_content.append(player.save())
-                with open('../data/players.json', 'w') as players_file:
+                with open('./data/players.json', 'w') as players_file:
                     json.dump(database_content, players_file, indent=4)
                 self.view.player_added_successfully()
             else:
@@ -69,7 +69,7 @@ class Controller:
         start_date = tournament_data['start_date']
         end_date = tournament_data['end_date']
         try:
-            with (open(f'../data/tournament/'
+            with (open(f'./data/tournament/'
                        f'{start_date}_{end_date}_{name}.json', 'r')
                   as tournament_file):
                 tournament_data = json.load(tournament_file)
@@ -153,3 +153,10 @@ class Controller:
             self.tournament_controller.tournament.get_status()
         else:
             self.view.error_tournament_not_loaded()
+
+
+# if __name__ == "__main__":
+#     view = BaseView()
+#     controller = Controller(view)
+#     while controller.main_menu_action():
+#         pass
