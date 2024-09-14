@@ -1,4 +1,4 @@
-from Util.formatverification import round_date
+from Util.utils import get_round_date
 from Models.match import Match
 
 
@@ -8,7 +8,7 @@ class Round:
                  end_date=None, matches=None):
         if tournament:
             self.name = f'Round {tournament.current_round_number}'
-            self.start_date = round_date()
+            self.start_date = get_round_date()
             self.end_date = 0
             self.matches = []
         else:
@@ -18,10 +18,10 @@ class Round:
             self.matches = matches
 
     @classmethod
-    def from_json_format(cls, round_data):
+    def from_json_format(cls, round_data, tournament_players):
         round_matches = []
         for match in round_data['round_matches']:
-            new_match = Match.from_json_format(match)
+            new_match = Match.from_json_format(match, tournament_players)
             round_matches.append(new_match)
 
         return cls(name=round_data['round_name'],

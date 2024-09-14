@@ -1,32 +1,24 @@
-from Models.player import Player
-
-
-class TournamentPlayer(Player):
-    def __init__(self, player_chess_id, player_name, player_surname,
-                 player_date_of_birth, player_current_score=0):
-        super().__init__(player_chess_id, player_name, player_surname,
-                         player_date_of_birth)
-        self.score = player_current_score
+class TournamentPlayer:
+    def __init__(self, player_chess_id, player_current_score=0):
+        self.player_chess_id = player_chess_id
+        self.player_tournament_score = player_current_score
 
     @classmethod
-    def from_tournament_player_database_json_format(cls, player_data):
+    def from_json_format(cls, player_data):
         return cls(*player_data.values())
 
     def __str__(self):
-        return (f'{self.player_name} {self.player_surname} - '
-                f'{self.player_chess_id} (score total sur le tournoi de {self.score})')
+        return (f'{self.player_chess_id} - Score total sur le tournoi de '
+                f'{self.player_tournament_score}')
 
     def __repr__(self):
         representation = (f'[chess_ID={self.player_chess_id}, '
-                          f'score={self.score}]')
+                          f'score={self.player_tournament_score}]')
         return representation
 
     def save(self):
         """
         Display the tournament player's data in a dictionary for the storage
         """
-        data = super().save()
-        data['player_current_score'] = self.score
-        return data
-
-
+        return {'player_chess_id': self.player_chess_id,
+                'player_tournament_score': self.player_tournament_score}

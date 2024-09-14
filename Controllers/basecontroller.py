@@ -4,19 +4,18 @@ from Models.player import Player
 from Models.tournament import Tournament
 from Controllers.tournamentcontroller import TournamentController
 from Controllers.reportcontroller import ReportController
-from Util.formatverification import folder_creation
-from Util.formatverification import tournament_name_formatting
-from Util.loadplayers import load_players_from_database
+from Util.utils import folder_creation
+from Util.utils import tournament_name_formatting
+from Util.playerloader import load_players_from_database
 
 
 class Controller:
-
     def __init__(self, view):
         folder_creation()
         self.players = load_players_from_database()
         self.view = view
         self.tournament_controller = None
-        self.report_controller = ReportController(self.view)
+        self.report_controller = ReportController(self.view, self.players)
 
     def add_player_to_database(self):
         """ Add a player to the database """
@@ -35,7 +34,6 @@ class Controller:
                 self.view.player_added_successfully()
             else:
                 break
-        self.report_controller.update_players()
 
     def create_tournament(self):
         """ Create a tournament according to the data provided by the user """
@@ -83,8 +81,10 @@ class Controller:
 
     def update_controllers(self, tournament):
         self.tournament_controller = TournamentController(tournament,
-                                                          self.view)
+                                                          self.view,
+                                                          self.players)
         self.report_controller = ReportController(self.view,
+                                                  self.players,
                                                   self.tournament_controller)
 
     def main_menu_action(self):
@@ -106,9 +106,6 @@ class Controller:
                 self.handle_continue_tournament()
                 return True
             case '6':
-                self.handle_get_tournament_status()
-                return True
-            case '7':
                 self.report_menu_action()
                 return True
             case '9':
@@ -138,7 +135,7 @@ class Controller:
     def handle_add_players_to_tournament(self):
         if self.tournament_controller is not None:
             (self.tournament_controller
-             .add_player_to_tournament(self.players))
+             .add_player_to_tournament())
         else:
             self.view.error_tournament_not_loaded()
 
@@ -147,16 +144,3 @@ class Controller:
             self.tournament_controller.continue_tournament()
         else:
             self.view.error_tournament_not_loaded()
-
-    def handle_get_tournament_status(self):
-        if self.tournament_controller is not None:
-            self.tournament_controller.tournament.get_status()
-        else:
-            self.view.error_tournament_not_loaded()
-
-
-# if __name__ == "__main__":
-#     view = BaseView()
-#     controller = Controller(view)
-#     while controller.main_menu_action():
-#         pass

@@ -15,3 +15,10 @@ def load_players_from_database():
             players.append(Player
                            .from_player_database_json_format(player_data))
         return players
+
+
+def get_player_from_chess_id(chess_id, players):
+    for player in players:
+        if player.player_chess_id == chess_id:
+            return player
+    return None

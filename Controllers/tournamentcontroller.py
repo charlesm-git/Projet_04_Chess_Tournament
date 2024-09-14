@@ -5,14 +5,16 @@ from Models.tournamentplayer import TournamentPlayer
 from Models.round import Round
 from Models.match import Match
 from Views.baseview import BaseView
-from Util.formatverification import round_date
-from Util.formatverification import valid_chess_id_format
+from Util.utils import get_round_date
+from Util.utils import valid_chess_id_format
+from Util.playerloader import get_player_from_chess_id
 
 
 class TournamentController:
 
-    def __init__(self, tournament: Tournament, view: BaseView):
+    def __init__(self, tournament: Tournament, view: BaseView, players):
         self.tournament = tournament
+        self.players = players
         self.view = view
 
     def continue_tournament(self):
@@ -24,7 +26,8 @@ class TournamentController:
                     if (self.tournament.current_round is None
                             or self.tournament.current_round.end_date != 0):
                         self.create_round()
-                    self.view.get_next_round_matches(self.tournament)
+                    self.view.get_next_round_matches(self.tournament,
+                                                     self.players)
                     if self.view.get_continue_tournament(self.tournament):
                         self.round_result()
                     else:
@@ -47,8 +50,7 @@ class TournamentController:
             self.view.player_ranking(player, rank)
             rank += 1
 
-
-    def add_player_to_tournament(self, players):
+    def add_player_to_tournament(self):
         """ Create the list of players for one tournament """
         if self.tournament.current_round is None:
             self.view.welcome_message_tournament_player_input()
@@ -61,24 +63,15 @@ class TournamentController:
                     if valid_chess_id_format(tournament_player_chess_id):
                         player_found = False
                         # Go thought de list of all the players
-                        for player in players:
-                            # If the player is found in the database, a
-                            # tournament player is created and the tournament
-                            # players list is appended
-                            if (player.player_chess_id ==
-                                    tournament_player_chess_id):
-                                tournament_player = (
-                                    TournamentPlayer(player.player_chess_id,
-                                                     player.player_name,
-                                                     player.player_surname,
-                                                     player
-                                                     .player_date_of_birth)
-                                )
-                                (self.tournament.tournament_players
-                                 .append(tournament_player))
-                                player_found = True
-                                self.save_tournament()
-                                break
+                        player = get_player_from_chess_id(
+                            tournament_player_chess_id, self.players)
+                        if player is not None:
+                            tournament_player = (
+                                TournamentPlayer(tournament_player_chess_id))
+                            (self.tournament.tournament_players
+                             .append(tournament_player))
+                            player_found = True
+                            self.save_tournament()
                         # If the player is not found in the database, a
                         # notification is sent to the user
                         if not player_found:
@@ -127,7 +120,8 @@ class TournamentController:
         Order the players of a tournament according to their ranking
         """
         (self.tournament.tournament_players
-         .sort(key=lambda tournament_player: tournament_player.score))
+         .sort(key=lambda tournament_player: tournament_player
+               .player_tournament_score))
 
     def round_result(self):
         """
@@ -144,7 +138,7 @@ class TournamentController:
         self.tournament.current_round.matches = round_result
         self.tournament.rounds_results.append(self.tournament.current_round)
         # Set the time of the end of the round
-        self.tournament.current_round.end_date = round_date()
+        self.tournament.current_round.end_date = get_round_date()
         self.save_tournament()
 
     def match_winner_update(self, match):
@@ -154,7 +148,7 @@ class TournamentController:
         :return the match result in a tuple format
         """
         while True:
-            result = self.view.get_match_result(match)
+            result = self.view.get_match_result(match, self.players)
             if result in ['0', '1', '2']:
                 break
             else:
@@ -162,15 +156,15 @@ class TournamentController:
         match result:
             case '1':
                 match.match_score_player1 = 1
-                match.player1.score += 1
+                match.player1.player_tournament_score += 1
             case '2':
                 match.match_score_player2 = 1
-                match.player2.score += 1
+                match.player2.player_tournament_score += 1
             case '0':
                 match.match_score_player1 = 0.5
-                match.player1.score += 0.5
+                match.player1.player_tournament_score += 0.5
                 match.match_score_player2 = 0.5
-                match.player2.score += 0.5
+                match.player2.player_tournament_score += 0.5
         return match
 
     def save_tournament(self):

@@ -22,7 +22,7 @@ def valid_chess_id_format(chess_id):
     return True
 
 
-def round_date():
+def get_round_date():
     timestamp = datetime.now().strftime("%Y-%m-%d-T%H:%M:%S")
     return timestamp
 
@@ -34,6 +34,7 @@ def folder_creation():
     if not tournament_directory.exists():
         tournament_directory.mkdir(parents=True)
         player_database.touch()
+
 
 def tournament_name_formatting(name):
     name = name.lower()

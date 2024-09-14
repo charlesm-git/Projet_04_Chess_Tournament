@@ -5,25 +5,22 @@ from prettytable import prettytable
 from Views import baseview
 from Models.tournament import Tournament
 from Models.round import Round
-from Util.loadplayers import load_players_from_database
+from Util.playerloader import load_players_from_database
+from Util.playerloader import get_player_from_chess_id
 
 
 class ReportController:
 
-    def __init__(self, view: baseview, tournament_controller=None):
+    def __init__(self, view: baseview, players, tournament_controller=None):
         self.tournament_controller = tournament_controller
-        self.players = None
+        self.players = players
         self.view = view
 
-    def update_players(self):
-        self.players = load_players_from_database()
-
     def players_list_report(self):
-        self.update_players()
         report = prettytable.PrettyTable()
-        report.title = 'Liste des joueurs présents 7dans la base de données'
+        report.title = 'Liste des joueurs présents dans la base de données'
         report.field_names = ['Nom', 'Prénom', 'Identifiant',
-                             'Date de naissance']
+                              'Date de naissance']
         report.padding_width = 2
         for player in self.players:
             report.add_row([player.player_surname,
@@ -60,13 +57,17 @@ class ReportController:
             report.title = ('Liste des joueurs dans le tournoi actuellement '
                             'sélectionné')
             report.field_names = ['Nom', 'Prénom', 'Identifiant',
-                                 'Score actuel']
+                                  'Score actuel']
             report.padding_width = 2
-            for player in self.tournament_controller.tournament.tournament_players:
+            for tournament_player in (self.tournament_controller.tournament
+                                      .tournament_players):
+                player = get_player_from_chess_id(tournament_player
+                                                  .player_chess_id,
+                                                  self.players)
                 report.add_row([player.player_surname,
-                               player.player_name,
-                               player.player_chess_id,
-                               player.score])
+                                player.player_name,
+                                tournament_player.player_chess_id,
+                                tournament_player.player_tournament_score])
             report.sortby = 'Nom'
             print()
             print(report)
@@ -107,9 +108,9 @@ class ReportController:
             for player in (self.tournament_controller.tournament
                            .tournament_players):
                 report.add_row([player.player_surname,
-                               player.player_name,
-                               player.player_chess_id,
-                               player.score])
+                                player.player_name,
+                                player.player_chess_id,
+                                player.player_tournament_score])
             report.sortby = 'Score actuel'
             report.reversesort = True
             print()
@@ -138,11 +139,15 @@ class ReportController:
         match_report.field_names = ['Match #', 'Joueur 1', 'Joueur 2', 'score']
         match_number = 1
         for match in round.matches:
+            player1 = get_player_from_chess_id(match.player1.player_chess_id,
+                                               self.players)
+            player2 = get_player_from_chess_id(match.player2.player_chess_id,
+                                               self.players)
             match_report.add_row([match_number,
-                                  f'{match.player1.player_name} '
-                                  f'{match.player1.player_surname}',
-                                  f'{match.player2.player_name} '
-                                  f'{match.player2.player_surname}',
+                                  f'{player1.player_name} '
+                                  f'{player1.player_surname}',
+                                  f'{player2.player_name} '
+                                  f'{player2.player_surname}',
                                   f'{match.match_score_player1}-'
                                   f'{match.match_score_player2}'])
             match_number += 1
