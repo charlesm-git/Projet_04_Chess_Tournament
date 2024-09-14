@@ -1,9 +1,9 @@
 from Views.baseview import BaseView
-from Controllers.basecontroller import Controller
+from Controllers.basecontroller import BaseController
 
 if __name__ == "__main__":
 
     view = BaseView()
-    controller = Controller(view)
+    controller = BaseController(view)
     while controller.main_menu_action():
         pass

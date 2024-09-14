@@ -2,6 +2,7 @@ import json
 
 from Models.player import Player
 from Models.tournament import Tournament
+from Controllers.menucontroller import MenuController
 from Controllers.tournamentcontroller import TournamentController
 from Controllers.reportcontroller import ReportController
 from Util.utils import folder_creation
@@ -9,13 +10,15 @@ from Util.utils import tournament_name_formatting
 from Util.playerloader import load_players_from_database
 
 
-class Controller:
+class BaseController:
     def __init__(self, view):
         folder_creation()
         self.players = load_players_from_database()
         self.view = view
         self.tournament_controller = None
         self.report_controller = ReportController(self.view, self.players)
+        self.menu_controller = MenuController(self.view, self,
+                                              self.report_controller)
 
     def add_player_to_database(self):
         """ Add a player to the database """
@@ -86,6 +89,10 @@ class Controller:
         self.report_controller = ReportController(self.view,
                                                   self.players,
                                                   self.tournament_controller)
+        self.menu_controller = MenuController(self.view,
+                                              self,
+                                              self.report_controller,
+                                              self.tournament_controller)
 
     def main_menu_action(self):
         user_input = self.view.get_main_menu(self.tournament_controller)

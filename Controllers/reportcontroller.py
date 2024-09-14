@@ -105,12 +105,15 @@ class ReportController:
                                   'Score actuel']
             report.padding_width = 2
             self.tournament_controller.order_tournament_players_by_score()
-            for player in (self.tournament_controller.tournament
-                           .tournament_players):
+            for tournament_player in (self.tournament_controller.tournament
+                                      .tournament_players):
+                player = get_player_from_chess_id(tournament_player
+                                                  .player_chess_id,
+                                                  self.players)
                 report.add_row([player.player_surname,
                                 player.player_name,
-                                player.player_chess_id,
-                                player.player_tournament_score])
+                                tournament_player.player_chess_id,
+                                tournament_player.player_tournament_score])
             report.sortby = 'Score actuel'
             report.reversesort = True
             print()

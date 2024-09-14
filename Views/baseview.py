@@ -148,8 +148,7 @@ class BaseView:
         print('3 - Charger un tournoi de la base de données')
         print('4 - Ajouter des joueurs au tournoi')
         print('5 - Continuer le tournoi')
-        print('6 - Obtenir le statut du tournoi')
-        print('7 - Rapports')
+        print('6 - Rapports')
         print('9 - Quitter le programme')
         return input('\nEntrer le nombre correspondant : ')
 
