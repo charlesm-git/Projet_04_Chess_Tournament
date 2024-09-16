@@ -13,7 +13,7 @@ def load_players_from_database():
         players = []
         for player_data in players_data:
             players.append(Player
-                           .from_player_database_json_format(player_data))
+                           .from_json_format(player_data))
         return players
 
 

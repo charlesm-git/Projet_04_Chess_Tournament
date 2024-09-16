@@ -8,7 +8,7 @@ class Player:
         self.player_date_of_birth = player_date_of_birth
 
     @classmethod
-    def from_player_database_json_format(cls, player_data):
+    def from_json_format(cls, player_data):
         """ Instance a Player from a dictionary built from a JSON format """
         return cls(*player_data.values())
 

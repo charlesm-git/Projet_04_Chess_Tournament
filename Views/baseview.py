@@ -1,4 +1,3 @@
-from Util.utils import valid_chess_id_format
 from Util.utils import valid_date_format
 
 
@@ -92,11 +91,6 @@ class BaseView:
         Get the data of a new player
         :return: The player's data as a dictionary
         """
-        while True:
-            player_chess_id = input('Entrer l identifiant national du joueur '
-                                    '(format : AB12345) : ')
-            if valid_chess_id_format(player_chess_id) is True:
-                break
         player_name = input('Entrer le prenom du joueur : ')
         player_surname = input('Entrer le nom de famille du joueur : ')
         while True:
@@ -104,14 +98,14 @@ class BaseView:
                                          'joueur (format : YYYY-MM-DD) : ')
             if valid_date_format(player_date_of_birth):
                 break
-        return {'player_chess_id': player_chess_id,
-                'player_name': player_name,
+        return {'player_name': player_name,
                 'player_surname': player_surname,
                 'player_date_of_birth': player_date_of_birth}
 
-    def get_players_chess_id(self):
+    def get_player_chess_id(self):
         """ Ask the user to input the chess ID of a tournament participant """
-        return input('Identifiant national du participant : ')
+        return input('Entrer l identifiant national du joueur (format : '
+                     'AB12345) : ')
 
     def get_continue_adding_players(self):
         """ Ask the user if they want to continue adding players """
@@ -237,6 +231,14 @@ class BaseView:
         """
         print("\nLe tournoi compte un nombre de joueur impair. Assurer vous "
               "d'avoir un nombre de joueur pair avant de le lancer.")
+
+    def error_player_already_in_database(self):
+        """
+        Error in case the player that the user wants to add is already
+        registered in the database
+        """
+        print('\nLe joueur avec cet identifiant exite déjà dans la base de '
+              'données\n')
 
     def error_input(self):
         """ Error in case the input given by the user is not correct """

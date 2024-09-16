@@ -7,7 +7,9 @@ from Controllers.tournamentcontroller import TournamentController
 from Controllers.reportcontroller import ReportController
 from Util.utils import folder_creation
 from Util.utils import tournament_name_formatting
+from Util.utils import valid_chess_id_format
 from Util.playerloader import load_players_from_database
+from Util.playerloader import get_player_from_chess_id
 
 
 class BaseController:
@@ -24,9 +26,18 @@ class BaseController:
         """ Add a player to the database """
         while True:
             if self.view.get_continue_adding_players():
-                data = self.view.get_player_data()
-                player_to_add = Player.from_player_database_json_format(data)
-                self.players.append(player_to_add)
+                while True:
+                    player_chess_id = self.view.get_player_chess_id()
+                    if valid_chess_id_format(player_chess_id):
+                        if (get_player_from_chess_id(player_chess_id,
+                                                     self.players) is None):
+                            data = {'player_chess_id': player_chess_id}
+                            data.update(self.view.get_player_data())
+                            player_to_add = Player.from_json_format(data)
+                            self.players.append(player_to_add)
+                            break
+                        else:
+                            self.view.error_player_already_in_database()
                 # Recreate the list of dictionaries necessary for the JSON
                 # storage
                 database_content = []
