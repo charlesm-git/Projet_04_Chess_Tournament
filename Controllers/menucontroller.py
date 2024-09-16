@@ -1,5 +1,12 @@
+from Views.baseview import BaseView
+from Controllers.reportcontroller import ReportController
+
+
 class MenuController:
-    def __init__(self, view, base_controller, report_controller,
+    def __init__(self,
+                 view: BaseView,
+                 base_controller,
+                 report_controller: ReportController,
                  tournament_controller=None):
         self.view = view
         self.base_controller = base_controller
@@ -60,6 +67,6 @@ class MenuController:
 
     def handle_continue_tournament(self):
         if self.tournament_controller is not None:
-            self.tournament_controller.continue_tournament()
+            self.tournament_controller.tournament_management()
         else:
             self.view.error_tournament_not_loaded()

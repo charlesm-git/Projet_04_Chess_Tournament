@@ -148,6 +148,6 @@ class BaseController:
 
     def handle_continue_tournament(self):
         if self.tournament_controller is not None:
-            self.tournament_controller.continue_tournament()
+            self.tournament_controller.tournament_management()
         else:
             self.view.error_tournament_not_loaded()

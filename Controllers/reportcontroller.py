@@ -5,7 +5,6 @@ from prettytable import prettytable
 from Views import baseview
 from Models.tournament import Tournament
 from Models.round import Round
-from Util.playerloader import load_players_from_database
 from Util.playerloader import get_player_from_chess_id
 
 
@@ -17,6 +16,10 @@ class ReportController:
         self.view = view
 
     def players_list_report(self):
+        """
+        Prints, in a PrettyTable, the report containing all the players in the
+        database
+        """
         report = prettytable.PrettyTable()
         report.title = 'Liste des joueurs présents dans la base de données'
         report.field_names = ['Nom', 'Prénom', 'Identifiant',
@@ -32,6 +35,10 @@ class ReportController:
         print(report)
 
     def tournaments_list_report(self):
+        """
+        Prints, in a PrettyTable, the report containing all the tournaments in
+        the database
+        """
         report = prettytable.PrettyTable()
         report.title = 'Liste des tournois créés'
         report.field_names = ['Nom', 'Date de début', 'Date de fin',
@@ -52,6 +59,10 @@ class ReportController:
         print(report)
 
     def tournaments_players_list_report(self):
+        """
+        Prints, in a PrettyTable, the report containing all the players in a
+        tournament
+        """
         if self.tournament_controller is not None:
             report = prettytable.PrettyTable()
             report.title = ('Liste des joueurs dans le tournoi actuellement '
@@ -75,6 +86,10 @@ class ReportController:
             self.view.error_tournament_not_loaded()
 
     def tournament_rounds_and_matches_report(self):
+        """
+        Prints the report containing the rounds and matches (passed and/or
+        current) in a tournament
+        """
         if self.tournament_controller.tournament.current_round is None:
             print("\nLe tournoi n'a pas encore commencé, vous pouvez "
                   "encore ajouter des joueurs si vous le souhaitez")
@@ -92,12 +107,16 @@ class ReportController:
                   .name} est marqué commé terminé. Il reste '
                   f'{number_of_round_left} round(s) à jouer')
         if self.tournament_controller.tournament.rounds_results:
-            print(f'\nLes résultats des rounds terminés sont :')
+            print('\nLes résultats des rounds terminés sont :')
             for round in self.tournament_controller.tournament.rounds_results:
                 self.round_results_report(round)
                 print('\n')
 
     def tournament_results(self):
+        """
+        Prints, in a PrettyTable, the report containing the provisional results
+        of the tournament
+        """
         if self.tournament_controller is not None:
             report = prettytable.PrettyTable()
             report.title = 'Résultats du tournoi sélectionné'
@@ -125,11 +144,15 @@ class ReportController:
                   self.tournament_controller.tournament.NUMBER_OF_ROUNDS or
                   self.tournament_controller.tournament.current_round
                   .end_date == 0):
-                print("Attention, le tournoi n'est pas encore terminé !")
+                print("\nAttention, le tournoi n'est pas encore terminé !")
         else:
             self.view.error_tournament_not_loaded()
 
     def round_results_report(self, round: Round):
+        """
+        Creates the report for on round.
+        Called in tournament_rounds_and_matches_report()
+        """
         round_report = prettytable.PrettyTable()
         round_report.padding_width = 2
         round_report.title = f'{round.name}'
@@ -142,6 +165,7 @@ class ReportController:
         match_report.field_names = ['Match #', 'Joueur 1', 'Joueur 2', 'score']
         match_number = 1
         for match in round.matches:
+            # Get the players from their chess_id
             player1 = get_player_from_chess_id(match.player1.player_chess_id,
                                                self.players)
             player2 = get_player_from_chess_id(match.player2.player_chess_id,

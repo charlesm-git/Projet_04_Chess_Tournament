@@ -17,7 +17,7 @@ class BaseView:
         name = input('Entrer le nom du tournoi : ')
         location = input('Entrer la localisation du tournoi : ')
         description = input('Entrer, si besoin, une description '
-                                       'pour le tournoi : ')
+                            'pour le tournoi : ')
         while True:
             start_date = input('Entrer la date de début du tournoi '
                                '(format : YYYY-MM-DD) : ')
@@ -230,6 +230,13 @@ class BaseView:
         """
         print('\nLe tournoi ne contient aucun joueur pour le moment. Veuillez '
               'en ajouter avant de continuer')
+
+    def error_odd_number_of_players_in_tournament(self):
+        """
+        Error in case the tournament is started with an odd number of players
+        """
+        print("\nLe tournoi compte un nombre de joueur impair. Assurer vous "
+              "d'avoir un nombre de joueur pair avant de le lancer.")
 
     def error_input(self):
         """ Error in case the input given by the user is not correct """

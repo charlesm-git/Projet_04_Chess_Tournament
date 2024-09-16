@@ -23,6 +23,7 @@ def valid_chess_id_format(chess_id):
 
 
 def get_round_date():
+    """ Get the timestamps for the round start and end dates """
     timestamp = datetime.now().strftime("%Y-%m-%d-T%H:%M:%S")
     return timestamp
 
@@ -37,6 +38,7 @@ def folder_creation():
 
 
 def tournament_name_formatting(name):
-    name = name.lower()
+    """ Format the name of the tournament. Used for the storing """
+    name = name.title()
     name = name.replace(' ', '_')
     return name
