@@ -76,7 +76,7 @@ class BaseView:
         """ Print a message to notify the tournament has been created """
         print(f'\nLe tournoi {tournament} a bien été créé')
 
-    def tournament_finished(self, tournament):
+    def tournament_finished(self):
         """ Print a message to notify the tournament is now finished """
         print('\nLe tournoi est terminé. Bravo à tous les participant !')
         print('\nVoici les résultats :')

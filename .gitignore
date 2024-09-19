@@ -12,6 +12,7 @@ data/
 
 # IDE
 .idea/
+.vscode/
 
 # Logs
 *.log

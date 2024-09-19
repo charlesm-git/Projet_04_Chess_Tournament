@@ -51,7 +51,7 @@ class TournamentController:
         if (self.tournament.current_round_number ==
                 self.tournament.NUMBER_OF_ROUNDS and
                 self.tournament.current_round.end_date != 0):
-            self.view.tournament_finished(self.tournament)
+            self.view.tournament_finished()
             self.tournament_result()
 
     def tournament_result(self):
@@ -74,10 +74,15 @@ class TournamentController:
                     # If it doesn't, valid_chess_id_format notify the user
                     if valid_chess_id_format(tournament_player_chess_id):
                         player_found = False
-                        # Check if this chess_id is in the players database
-                        player = get_player_from_chess_id(
+                        # Check if this chess_id is in the players database and
+                        # not already added to the tournament
+                        player_in_database = get_player_from_chess_id(
                             tournament_player_chess_id, self.players)
-                        if player is not None:
+                        player_in_tournament = get_player_from_chess_id(
+                            tournament_player_chess_id,
+                            self.tournament.tournament_players)
+                        if (player_in_database is not None and
+                                player_in_tournament is None):
                             # Creates the tournament player, appends the list
                             # and saves the tournament
                             tournament_player = (
@@ -90,8 +95,8 @@ class TournamentController:
                         # notification is sent to the user
                         if not player_found:
                             print('Le joueur n est pas enregistré dans la '
-                                  'base de donnees. Veuillez l enregistrer '
-                                  'avant de l ajouter à un tournoi')
+                                  'base de donnees ou a déjà été ajouté au '
+                                  'tournoi. Verifiez votre saisie')
                 else:
                     break
         else:
@@ -141,7 +146,6 @@ class TournamentController:
             if score not in grouped_players:
                 grouped_players[score] = []
             grouped_players[score].append(player)
-        print(grouped_players)
 
         # List of players that couldn't be matched on the previous loop
         unmatched_players = []
@@ -223,9 +227,9 @@ class TournamentController:
             round_result.append(match_result)
         # Updates the matches list
         self.tournament.current_round.matches = round_result
-        self.tournament.rounds_results.append(self.tournament.current_round)
         # Set the time of the end of the round
         self.tournament.current_round.end_date = get_round_date()
+        self.tournament.rounds_results.append(self.tournament.current_round)
         self.save_tournament()
 
     def match_winner_update(self, match):

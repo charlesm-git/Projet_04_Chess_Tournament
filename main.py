@@ -5,5 +5,5 @@ if __name__ == "__main__":
 
     view = BaseView()
     controller = BaseController(view)
-    while controller.main_menu_action():
+    while controller.menu_controller.main_menu_action():
         pass

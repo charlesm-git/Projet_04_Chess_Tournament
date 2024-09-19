@@ -103,9 +103,10 @@ class ReportController:
                                     .NUMBER_OF_ROUNDS
                                     - self.tournament_controller.tournament
                                     .current_round_number)
-            print(f'\nLe {self.tournament_controller.tournament.current_round
-                  .name} est marqué commé terminé. Il reste '
-                  f'{number_of_round_left} round(s) à jouer')
+            print(f"\nLe "
+                  f"{self.tournament_controller.tournament.current_round.name}"
+                  f" est marqué comme terminé. Il reste "
+                  f"{number_of_round_left} round(s) à jouer")
         if self.tournament_controller.tournament.rounds_results:
             print('\nLes résultats des rounds terminés sont :')
             for round in self.tournament_controller.tournament.rounds_results:

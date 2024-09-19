@@ -99,5 +99,4 @@ class Tournament:
                     self.current_round) else None,
                 'rounds_results': rounds_data
                 }
-
         return data
