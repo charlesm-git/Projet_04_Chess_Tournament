@@ -12,7 +12,7 @@ class BaseView:
         Ask the User all the data necessary to create a tournament
         :return: The tournament data as a dictionary
         """
-        print('\nCréation d un nouveau tournoi')
+        print("\nCréation d'un nouveau tournoi")
         name = input('Entrer le nom du tournoi : ')
         location = input('Entrer la localisation du tournoi : ')
         description = input('Entrer, si besoin, une description '
@@ -53,20 +53,8 @@ class BaseView:
         database
         :return: The tournament data as a dictionary
         """
-        print('Vous avez décidé de charger un tournoi depuis la base de '
-              'données')
-        name = input('Entrer le nom du tournoi : ')
-        while True:
-            start_date = input('Entrer la date de début du tournoi : ')
-            if valid_date_format(start_date):
-                break
-        while True:
-            end_date = input('Entrer la date de fin du tournoi : ')
-            if valid_date_format(end_date):
-                break
-        return {'name': name,
-                'start_date': start_date,
-                'end_date': end_date}
+        tournament_index = input('Entrer le numéro du tournoi à charger : ')
+        return tournament_index
 
     def tournament_loaded_successfully(self, tournament):
         """ Print a message to notify the tournament has been loaded """

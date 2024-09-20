@@ -1,11 +1,9 @@
-import json
-from pathlib import Path
-from prettytable import prettytable
+from prettytable import PrettyTable
 
 from Views import baseview
-from Models.tournament import Tournament
 from Models.round import Round
 from Util.playerloader import get_player_from_chess_id
+from Util.tournamentloader import load_tournament_from_database
 
 
 class ReportController:
@@ -20,7 +18,7 @@ class ReportController:
         Prints, in a PrettyTable, the report containing all the players in the
         database
         """
-        report = prettytable.PrettyTable()
+        report = PrettyTable()
         report.title = 'Liste des joueurs présents dans la base de données'
         report.field_names = ['Nom', 'Prénom', 'Identifiant',
                               'Date de naissance']
@@ -39,24 +37,24 @@ class ReportController:
         Prints, in a PrettyTable, the report containing all the tournaments in
         the database
         """
-        report = prettytable.PrettyTable()
+        report = PrettyTable()
         report.title = 'Liste des tournois créés'
-        report.field_names = ['Nom', 'Date de début', 'Date de fin',
+        report.field_names = ['Index', 'Nom', 'Date de début', 'Date de fin',
                               'nombre de round', 'Description',]
         report.padding_width = 2
-        folder_path = Path('./data/tournament/')
-        for file in folder_path.iterdir():
-            if file.is_file():
-                with (open(file, 'r') as file_content):
-                    tournament_data = json.load(file_content)
-                    tournament = Tournament.from_json_format(tournament_data)
-                    report.add_row([tournament.name,
-                                    tournament.start_date,
-                                    tournament.end_date,
-                                    tournament.NUMBER_OF_ROUNDS,
-                                    tournament.description])
+        index = 1
+        tournament_list = load_tournament_from_database()
+        for tournament in tournament_list:
+            report.add_row([index,
+                            tournament.name,
+                            tournament.start_date,
+                            tournament.end_date,
+                            tournament.NUMBER_OF_ROUNDS,
+                            tournament.description])
+            index += 1
         print()
         print(report)
+        return tournament_list
 
     def tournaments_players_list_report(self):
         """
@@ -64,7 +62,7 @@ class ReportController:
         tournament
         """
         if self.tournament_controller is not None:
-            report = prettytable.PrettyTable()
+            report = PrettyTable()
             report.title = ('Liste des joueurs dans le tournoi actuellement '
                             'sélectionné')
             report.field_names = ['Nom', 'Prénom', 'Identifiant',
@@ -119,7 +117,7 @@ class ReportController:
         of the tournament
         """
         if self.tournament_controller is not None:
-            report = prettytable.PrettyTable()
+            report = PrettyTable()
             report.title = 'Résultats du tournoi sélectionné'
             report.field_names = ['Nom', 'Prénom', 'Identifiant',
                                   'Score actuel']
@@ -154,13 +152,13 @@ class ReportController:
         Creates the report for on round.
         Called in tournament_rounds_and_matches_report()
         """
-        round_report = prettytable.PrettyTable()
+        round_report = PrettyTable()
         round_report.padding_width = 2
         round_report.title = f'{round.name}'
         round_report.field_names = ['Date de début', 'Date de fin']
         round_report.add_row([round.start_date, round.end_date])
 
-        match_report = prettytable.PrettyTable()
+        match_report = PrettyTable()
         match_report.padding_width = 2
         match_report.title = f'Liste des matchs du {round.name}'
         match_report.field_names = ['Match #', 'Joueur 1', 'Joueur 2', 'score']

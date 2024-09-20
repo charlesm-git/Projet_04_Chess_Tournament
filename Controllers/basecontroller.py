@@ -76,22 +76,16 @@ class BaseController:
         Load a tournament from the JSON database and update the
         tournament_controller to manage the new tournament loaded
         """
-        tournament_data = self.view.get_tournament_to_load()
-        name = tournament_name_formatting(tournament_data['name'])
-        start_date = tournament_data['start_date']
-        end_date = tournament_data['end_date']
-        try:
-            with (open(f'./data/tournament/'
-                       f'{start_date}_{end_date}_{name}.json', 'r')
-                  as tournament_file):
-                tournament_data = json.load(tournament_file)
-
-            new_tournament = Tournament.from_json_format(tournament_data)
-            self.update_controllers(new_tournament)
-            self.view.tournament_loaded_successfully(
-                self.tournament_controller.tournament)
-        except FileNotFoundError:
-            self.view.error_loading_tournament()
+        tournament_list = self.report_controller.tournaments_list_report()
+        while True:
+            user_input = self.view.get_tournament_to_load()
+            if user_input.isdigit():
+                user_input = int(user_input)
+                if user_input in range(1, len(tournament_list) + 1):
+                    break
+        self.update_controllers(tournament_list[user_input - 1])
+        self.view.tournament_loaded_successfully(
+            self.tournament_controller.tournament)
 
     def update_controllers(self, tournament):
         self.tournament_controller = TournamentController(tournament,
